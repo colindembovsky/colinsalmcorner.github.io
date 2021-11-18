@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Aurelia, Azure and VSTS | Colin’s ALM Corner</title><meta name="generator" content="Jekyll v3.9.0" /><meta property="og:title" content="Aurelia, Azure and VSTS" /><meta name="author" content="Colin Dembovsky" /><meta property="og:locale" content="en" /><meta name="description" content="I am a huge fan of Aurelia – and that was even when I was working with it in the beta days. I recently had to do some development to display d3 graphs, and needed a simple SPA app. Of course I decided to use Aurelia. During development, I was again blown away by how well thought out Aurelia is – and using some new (to me) tooling, the experience was super. In this post I’ll walk through the tools that I used as well as the build/release pipeline that I set up to host the site in Azure." /><meta property="og:description" content="I am a huge fan of Aurelia – and that was even when I was working with it in the beta days. I recently had to do some development to display d3 graphs, and needed a simple SPA app. Of course I decided to use Aurelia. During development, I was again blown away by how well thought out Aurelia is – and using some new (to me) tooling, the experience was super. In this post I’ll walk through the tools that I used as well as the build/release pipeline that I set up to host the site in Azure." /><link rel="canonical" href="https://github.com/pages/colindembovsky/aurelia-azure-and-vsts/" /><meta property="og:url" content="https://github.com/pages/colindembovsky/aurelia-azure-and-vsts/" /><meta property="og:site_name" content="Colin’s ALM Corner" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2017-06-10T00:05:22+00:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Aurelia, Azure and VSTS" /><meta name="twitter:site" content="@colindembovsky" /><meta name="twitter:creator" content="@colindembovsky" /> <script type="application/ld+json"> {"description":"I am a huge fan of Aurelia – and that was even when I was working with it in the beta days. I recently had to do some development to display d3 graphs, and needed a simple SPA app. Of course I decided to use Aurelia. During development, I was again blown away by how well thought out Aurelia is – and using some new (to me) tooling, the experience was super. In this post I’ll walk through the tools that I used as well as the build/release pipeline that I set up to host the site in Azure.","url":"https://github.com/pages/colindembovsky/aurelia-azure-and-vsts/","@type":"BlogPosting","headline":"Aurelia, Azure and VSTS","dateModified":"2017-06-10T00:05:22+00:00","datePublished":"2017-06-10T00:05:22+00:00","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://github.com/pages/colindembovsky/assets/img/logo.png"},"name":"Colin Dembovsky"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://github.com/pages/colindembovsky/aurelia-azure-and-vsts/"},"author":{"@type":"Person","name":"Colin Dembovsky"},"@context":"https://schema.org"}</script><meta name="keywords" content="devops,github,actions,build,ci,cd"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Colin's ALM Corner"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="application-name" content="Colin's ALM Corner"><meta name="theme-color" content="rgb(5,19,24)"><meta name="generator" content="Hydejack v9.1.4" /><link rel="alternate" href="https://github.com/pages/colindembovsky/aurelia-azure-and-vsts/" hreflang="en"><link type="application/atom+xml" rel="alternate" href="https://github.com/pages/colindembovsky/feed.xml" title="Colin's ALM Corner" /><link rel="shortcut icon" href="/pages/colindembovsky/assets/icons/favicon.ico"><link rel="apple-touch-icon" href="/pages/colindembovsky/assets/icons/icon-192x192.png"><link rel="manifest" href="/pages/colindembovsky/assets/site.webmanifest"><link rel="dns-prefetch" href="https://fonts.googleapis.com"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preload" href="/pages/colindembovsky/assets/img/swipe.svg" as="image" id="_hrefSwipeSVG"><link rel="dns-prefetch" href="/pages/colindembovsky/assets/js/search-worker-9.1.4.js" as="worker" id="_hrefSearch"> <script>!function(r,c){"use strict";function a(e,t,n,o){e.addEventListener?e.addEventListener(t,n,o):e.attachEvent?e.attachEvent("on"+t,n):e["on"+t]=n}r.loadJS=function(e,t){var n=c.createElement("script");n.src=e,t&&a(n,"load",t,{once:!0});t=c.scripts[0];return t.parentNode.insertBefore(n,t),n},r._loaded=!1,r.loadJSDeferred=function(e,t){var n=c.createElement("script");function o(){r._loaded=!0,t&&a(n,"load",t,{once:!0});var e=c.scripts[0];e.parentNode.insertBefore(n,e)}return n.src=e,r._loaded?o():a(r,"load",o,{once:!0}),n},r.setRel=r.setRelStylesheet=function(e){a(c.getElementById(e),"load",function(){this.rel="stylesheet"},{once:!0})}}(window,document); !function(a){"use strict";var b=function(b,c,d){function e(a){return h.body?a():void setTimeout(function(){e(a)})}function f(){i.addEventListener&&i.removeEventListener("load",f),i.media=d||"all"}var g,h=a.document,i=h.createElement("link");if(c)g=c;else{var j=(h.body||h.getElementsByTagName("head")[0]).childNodes;g=j[j.length-1]}var k=h.styleSheets;i.rel="stylesheet",i.href=b,i.media="only x",e(function(){g.parentNode.insertBefore(i,c?g:g.nextSibling)});var l=function(a){for(var b=i.href,c=k.length;c--;)if(k[c].href===b)return a();setTimeout(function(){l(a)})};return i.addEventListener&&i.addEventListener("load",f),i.onloadcssdefined=l,l(f),i};"undefined"!=typeof exports?exports.loadCSS=b:a.loadCSS=b}("undefined"!=typeof global?global:this); !function(a){if(a.loadCSS){var b=loadCSS.relpreload={};if(b.support=function(){try{return a.document.createElement("link").relList.supports("preload")}catch(b){return!1}},b.poly=function(){for(var b=a.document.getElementsByTagName("link"),c=0;c<b.length;c++){var d=b[c];"preload"===d.rel&&"style"===d.getAttribute("as")&&(a.loadCSS(d.href,d,d.getAttribute("media")),d.rel=null)}},!b.support()){b.poly();var c=a.setInterval(b.poly,300);a.addEventListener&&a.addEventListener("load",function(){b.poly(),a.clearInterval(c)}),a.attachEvent&&a.attachEvent("onload",function(){a.clearInterval(c)})}}}(this); !function(w) { w._baseURL = '/pages/colindembovsky/'; w._publicPath = '/pages/colindembovsky/assets/js/'; w._noPushState = false; w._noDrawer = false; w._noNavbar = false; w._noToc = false; w._noSearch = false; w._advertise = false; w._search = { DATA_URL: '/pages/colindembovsky/assets/sitedata.json?no-cache', STORAGE_KEY: 'mini-search/pages/colindembovsky/', INDEX_KEY: 'index--2021-11-18T20:23:33+00:00', }; w._clapButton = false; }(window);</script> <script async src="/pages/colindembovsky/assets/bower_components/MathJax/es5/tex-mml-chtml.js" id="_MathJax"></script> <!--[if gt IE 8]><!----><style id="_styleInline"> .clearfix,.sidebar-social::after{content:"";display:table;clear:both}.color-transition,body,p,hr,.hr,.hr-after::after,.hr-bottom,.message,.note-sm,.note,#markdown-toc,.navbar,.nav-btn-bar,.nav-btn,.content .avatar{transition:none}#_dark-mode{font-size:1.25rem}@media screen{body.light-mode{--body-color: #333;--body-bg: #fff;--border-color: #ebebeb;--gray: #777;--gray-bg: rgba(0,0,0,0.025);--gray-text: #666;--menu-text: #bbb;--inv-body-color: #ccc;--inv-body-bg: var(--dark-mode-body-bg)}body.light-mode .content{-webkit-font-smoothing:initial;-moz-osx-font-smoothing:initial}body.dark-mode{--body-color: #ccc;--body-bg: var(--dark-mode-body-bg);--border-color: var(--dark-mode-border-color);--gray: rgba(255,255,255,.5);--gray-bg: rgba(255,255,255,.033);--gray-text: rgba(255,255,255,.625);--menu-text: rgba(255,255,255,.25);--inv-body-color: #333;--inv-body-bg: #fff}body.dark-mode .content{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}}@media screen and (prefers-color-scheme: dark){body{--body-color: #ccc;--body-bg: var(--dark-mode-body-bg);--border-color: var(--dark-mode-border-color);--gray: rgba(255,255,255,.5);--gray-bg: rgba(255,255,255,.033);--gray-text: rgba(255,255,255,.625);--menu-text: rgba(255,255,255,.25);--inv-body-color: #333;--inv-body-bg: #fff}body .content{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.tippy-content{-webkit-font-smoothing:initial;-moz-osx-font-smoothing:initial}}html{--font-family: Noto Sans,Helvetica,Arial,sans-serif;--font-family-heading: Roboto Slab,Helvetica,Arial,sans-serif;--code-font-family: Fira Code,Menlo,Monaco,Consolas,monospace;--body-color: #333;--body-bg: #fff;--border-color: #ebebeb;--gray: #777;--gray-bg: rgba(0,0,0,0.025);--gray-text: #666;--menu-text: #bbb;--inv-body-color: #ccc;--inv-body-bg: var(--dark-mode-body-bg);--root-font-size: 15px;--root-font-size-medium: 16px;--root-font-size-large: 17px;--root-font-size-print: 8pt;--root-line-height: 1.75;--font-weight: 400;--font-weight-bold: 700;--font-weight-heading: 700;--content-width-5: 54rem;--content-margin-5: 4rem;--sidebar-width: 21rem;--half-content: 31rem;--break-point-3: 64em;--break-point-5: 86em;--break-point-dynamic: 1664px}html .content{-webkit-font-smoothing:initial;-moz-osx-font-smoothing:initial}*{box-sizing:border-box}html,body{margin:0;padding:0}html{font-family:var(--font-family);font-size:var(--root-font-size);line-height:var(--root-line-height)}body{color:var(--body-color);background-color:var(--body-bg);font-weight:var(--font-weight);overflow-y:scroll}.content img,.img,.content video,.video{max-width:100%;height:auto}.lead{margin-left:-1rem;margin-right:-1rem;margin-bottom:1.5rem}img.lead,video.lead{display:block;max-width:calc(100% + 2rem);width:calc(100% + 2rem);height:auto}.heading,.f1,h1,.h1,.f2,h2,.h2,.f3,h3,.h3,.f4,h4,.h4,.post-date,.sidebar-nav-item,.f5,h5,.h5,.f6,h6,.h6{font-family:var(--font-family-heading);font-weight:var(--font-weight-heading)}.f1,h1,.h1{font-size:2rem;line-height:1.3}.f2,h2,.h2{font-size:1.5rem;line-height:1.4}.f3,h3,.h3{font-size:1.2em;line-height:1.5}.f4,h4,.h4,.post-date,.sidebar-nav-item{font-size:1.08rem;line-height:1.6}.f5,h5,.h5{font-size:1.04rem;line-height:1.7}.f6,h6,.h6{font-size:1rem}.content h1>a,.content .h1>a{text-decoration:none;border-bottom:none}@media screen and (max-width: 42em){.content h1,.content .h1{font-size:1.7rem;line-height:1.35}}@media screen and (min-width: 86em){.content h1,.content .h1{font-size:2.4rem;line-height:1.25}}@media screen and (min-width: 1664px){body:not(.no-large-headings) .content h1,body:not(.no-large-headings) .content .h1{width:calc(100% + 50vw - 32rem);font-size:3rem;line-height:1.2}}@media screen and (min-width: 124em){body:not(.no-large-headings) .content h1,body:not(.no-large-headings) .content .h1{font-size:4rem;line-height:1.1}}h1,h2,h3,.h1,.h2,.h3{margin:4rem 0 1rem}h4,h5,h6,.h4,.post-date,.h5,.h6{margin:3rem 0 .5rem}p{margin-top:0;margin-bottom:1rem}p.lead{font-size:1.2em;margin-top:1.5rem;margin-bottom:1.5rem;padding:0 1rem}ul,ol,dl{margin-top:0;margin-bottom:1rem}ul,ol{padding-left:1.25rem}hr,.hr{border:0;margin:1rem 0;border-top:1px solid var(--border-color)}.hr-after::after{content:"";display:block;margin:1rem 0;border-top:1px solid var(--border-color)}.hr-bottom{border-bottom:1px solid var(--border-color);padding-bottom:.75rem;margin-bottom:1rem}.page{margin-bottom:3em}.page li+li{margin-top:.25rem}.page>header{position:relative;margin-bottom:1.5rem}@media screen and (min-width: 1664px){body:not(.no-third-column) .page>header>.lead+.note-sm,body:not(.no-third-column) .page>header>.lead+.note,body:not(.no-third-column) .page>header>.lead+#markdown-toc,body:not(.no-third-column) .page>header>a.no-hover+.note-sm,body:not(.no-third-column) .page>header>a.no-hover+.note,body:not(.no-third-column) .page>header>a.no-hover+#markdown-toc{position:absolute;right:-25rem;width:21rem;bottom:0;margin-bottom:0}}.page-title,.post-title{margin-top:0}.post-date{display:flex;justify-content:space-between;margin-top:-.6rem;height:2rem;margin-bottom:.85rem;color:var(--gray)}.post-date>.ellipsis,#breadcrumbs.post-date>ul{cursor:pointer}.post-date [class^="icon-"]{display:inline-block;font-size:smaller;margin-right:.25rem}.related-posts{padding-left:0;list-style:none;margin-bottom:2rem}.related-posts>li,.related-posts>li+li{margin-top:1rem}.message,.note-sm,.note,#markdown-toc{margin-bottom:1rem;padding:1rem;color:var(--gray-text);background-color:var(--gray-bg);margin-left:-1rem;margin-right:-1rem}.note-sm,.note,#markdown-toc{background:transparent;color:var(--body-color);font-size:smaller;border-left:1px solid var(--border-color);padding:1.2rem 1rem 0 1rem;margin:1rem -1rem;position:relative}.note-sm:before,.note:before,#markdown-toc:before{font-size:0.667rem;font-weight:bold;font-style:normal;letter-spacing:.025rem;text-transform:uppercase;color:var(--menu-text);position:absolute;top:0}.note-sm[title]:before,[title].note:before,[title]#markdown-toc:before{content:attr(title) !important}.note{font-size:1rem}@media screen{body::before{content:'';width:.5rem;background:var(--gray-bg);position:fixed;left:0;top:0;bottom:0}}@media (min-width: 64em){body::before{width:21rem}}@media (min-width: 1664px){body::before{width:calc(50% - 31rem)}}@media screen and (min-width: 42em){html{font-size:var(--root-font-size-medium)}}@media screen and (min-width: 124em){html{font-size:var(--root-font-size-large)}}#breadcrumbs>ul{height:1rem;margin:-1.5rem 0 .5rem;padding:0;font-size:.667rem;color:var(--menu-text);text-transform:uppercase;width:100%;list-style:none}#breadcrumbs>ul>li{display:inline}#breadcrumbs>ul>li a{color:var(--gray);text-decoration:none;border-bottom:none}.fl{float:left}.fr{float:right}.mb4{margin-bottom:4rem}.mb6{margin-bottom:6rem}.mt0{margin-top:0}.mt1{margin-top:1rem}.mt2{margin-top:2rem}.mt3{margin-top:3rem}.mt4{margin-top:4rem}.pb0{padding-bottom:0}.ml1{margin-left:1rem}.mr1{margin-right:1rem}.sixteen-nine{position:relative}.sixteen-nine::before{display:block;content:"";width:100%;padding-top:56.25%}.sixteen-nine>*{position:absolute;top:0;left:0;right:0;bottom:0}.sixteen-ten{position:relative}.sixteen-ten::before{display:block;content:"";width:100%;padding-top:62.5%}.sixteen-ten>*{position:absolute;top:0;left:0;right:0;bottom:0}.four-three{position:relative}.four-three::before{display:block;content:"";width:100%;padding-top:75%}.four-three>*{position:absolute;top:0;left:0;right:0;bottom:0}.sr-only{display:none}.larger{font-size:larger}.smaller{font-size:smaller}.clearfix,.sidebar-social::after{content:"";display:table;clear:both}.ellipsis,#breadcrumbs>ul{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.border{border:1px solid var(--border-color)}@media (min-width: 42em){.border-radius,.lead,.page .aspect-ratio.sixteen-nine.lead{border-radius:.5rem}}.fallback-img{background-position:center;background-repeat:no-repeat;background-image:url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjkwIiB2aWV3Qm94PSIwIDAgMTYwIDkwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxnIHRyYW5zZm9ybT0ibWF0cml4KDAuMDQ4ODI4LCAwLCAwLCAwLjA0Nzk5MSwgNTQuOTk5OTczLCAyMC40MjgxNDgpIj4KICAgIDxwYXRoIHN0eWxlPSJmaWxsOnJnYmEoMTI4LDEyOCwxMjgsLjMzKSIgZD0iTTk1OS44ODQgMTI4YzAuMDQwIDAuMDM0IDAuMDgyIDAuMDc2IDAuMTE2IDAuMTE2djc2Ny43N2MtMC4wMzQgMC4wNDAtMC4wNzYgMC4wODItMC4xMTYgMC4xMTZoLTg5NS43N2MtMC4wNDAtMC4wMzQtMC4wODItMC4wNzYtMC4xMTQtMC4xMTZ2LTc2Ny43NzJjMC4wMzQtMC4wNDAgMC4wNzYtMC4wODIgMC4xMTQtMC4xMTRoODk1Ljc3ek05NjAgNjRoLTg5NmMtMzUuMiAwLTY0IDI4LjgtNjQgNjR2NzY4YzAgMzUuMiAyOC44IDY0IDY0IDY0aDg5NmMzNS4yIDAgNjQtMjguOCA2NC02NHYtNzY4YzAtMzUuMi0yOC44LTY0LTY0LTY0djB6Ii8+CiAgICA8cGF0aCBzdHlsZT0iZmlsbDpyZ2JhKDEyOCwxMjgsMTI4LC4zMykiIGQ9Ik04MzIgMjg4YzAgNTMuMDIwLTQyLjk4IDk2LTk2IDk2cy05Ni00Mi45OC05Ni05NiA0Mi45OC05NiA5Ni05NiA5NiA0Mi45OCA5NiA5NnoiLz4KICAgIDxwYXRoIHN0eWxlPSJmaWxsOnJnYmEoMTI4LDEyOCwxMjgsLjMzKSIgZD0iTTg5NiA4MzJoLTc2OHYtMTI4bDIyNC0zODQgMjU2IDMyMGg2NGwyMjQtMTkyeiIvPgogIDwvZz4KPC9zdmc+")}hy-push-state a{color:var(--body-color)}@supports not ((text-decoration-thickness: initial) and (text-underline-offset: initial)){hy-push-state a{text-decoration:none;border-bottom:2px solid}}@supports (text-decoration-thickness: initial) and (text-underline-offset: initial){hy-push-state a{text-decoration-style:solid;text-underline-offset:.35rem;text-decoration-thickness:2px}}hy-push-state a.no-hover{border-bottom:none;text-decoration-thickness:unset;text-underline-offset:unset}.content a:not(.btn):not(.no-hover){border-color:var(--accent-color-faded)}@supports (text-decoration-thickness: initial) and (text-underline-offset: initial){.content a:not(.btn):not(.no-hover){text-decoration-color:var(--accent-color-faded)}}.content .aspect-ratio{overflow:hidden}.content .aspect-ratio img{margin:0;width:100%;height:100%;background-color:var(--gray-bg)}hy-drawer{width:100%;position:relative;overflow:hidden;display:block;z-index:4}@media screen and (min-width: 64em){hy-drawer{position:fixed;width:21rem;top:0;left:0;bottom:0;margin-left:0}hy-drawer.cover{position:relative;width:100%}}@media screen and (min-width: 1664px){hy-drawer{width:calc(50% - 31rem)}}.sidebar{position:relative;display:flex;justify-content:center;align-items:center;color:rgba(255,255,255,0.75);text-align:center;min-height:100vh}.sidebar.invert{color:rgba(32,32,32,0.75)}.sidebar a{color:#fff;border-bottom-color:rgba(255,255,255,0.2);text-decoration-color:rgba(255,255,255,0.2)}.sidebar.invert a{color:#222;border-bottom-color:rgba(32,32,32,0.2);text-decoration-color:rgba(32,32,32,0.2)}.sidebar-bg{position:absolute;top:0;left:calc(50% - 50vw);width:100vw;height:100%;background:#202020 center / cover}.sidebar-bg::after{content:"";position:absolute;top:0;left:0;bottom:0;right:0;background:rgba(0,0,0,0.05)}.sidebar-bg.sidebar-overlay::after{background:linear-gradient(to bottom, rgba(32,32,32,0) 0%, rgba(32,32,32,0.5) 50%, rgba(32,32,32,0) 100%)}.sidebar-sticky{position:relative;z-index:3;max-width:21rem;padding:1.5rem;contain:content}.sidebar-about .avatar{margin-bottom:1.5rem}.sidebar-about>a.sidebar-title{text-decoration:none}.sidebar-about>a.sidebar-title>h2{margin:0;padding-bottom:.5rem}.sidebar-about>a.sidebar-title::after{content:'';display:block;border-bottom:2px solid;margin:0 auto .5rem;width:4rem;border-color:rgba(255,255,255,0.2);transition:border-color 250ms}.sidebar-about>a.sidebar-title:hover::after{border-color:#fff;transition:border-color 50ms}.sidebar.invert .sidebar-about>a.sidebar-title::after{border-color:rgba(32,32,32,0.2)}.sidebar.invert .sidebar-about>a.sidebar-title:hover::after{border-color:#222}.sidebar-nav>ul{list-style:none;padding-left:0}.sidebar-nav-item{display:inline-block;margin-bottom:.5rem}@media (min-width: 64em){#_main.no-drawer #_menu{display:none}#_main.no-drawer .nav-btn-bar>:nth-child(2){border:none}}.sidebar-social>ul{display:inline-block;list-style:none;padding-left:0;margin-bottom:0}.sidebar-social>ul>li{float:left}.sidebar-social>ul>li>a{display:inline-block;text-align:center;font-size:1.4rem;width:3rem;height:4rem;padding:.5rem 0;line-height:3rem;text-decoration:none;border-bottom-width:2px;border-bottom-style:solid}.sidebar-social>ul li+li{margin-top:0}.fixed-common,.fixed-top,.fixed-bottom{position:fixed;left:0;width:100%;z-index:2}.fixed-top{top:0}.fixed-bottom{bottom:0}.navbar>.content{position:relative;padding-top:0;padding-bottom:0;min-height:0;max-height:5rem}.nav-btn-bar{margin:0 -1rem;background-color:white;background-color:var(--body-bg);height:5rem;display:flex;align-items:center;position:relative}.nav-btn-bar>:first-child,.nav-btn-bar>:last-child{border:none}.nav-btn{background:none;border:none;text-decoration:none;display:flex;align-items:center;justify-content:center;width:3.25rem;height:5rem;color:var(--menu-text);border-right:1px solid var(--border-color);border-left:1px solid var(--border-color);margin-left:-1px}#markdown-toc{margin:2rem -1rem 2rem calc(-1rem + 1px);padding-left:2.5rem;padding-bottom:.5rem}#markdown-toc:before{left:1rem}@media screen and (min-width: 1664px){body:not(.no-toc) #markdown-toc{position:absolute;z-index:4;width:20.5rem;right:0;margin:auto;overflow:auto}}@media screen and (min-width: 1664px){body.no-break-layout:not(.no-toc) #markdown-toc{width:calc(50% - 31rem)}}.content{margin-left:auto;margin-right:auto;padding:8rem 1rem 12rem}@media screen{.content{padding-left:1.5rem;min-height:100vh}}@media screen and (min-width: 42em){.content{max-width:42rem}}@media screen and (min-width: 54em){.content{max-width:48rem}}@media screen and (min-width: 64em){.content{padding-left:1rem;margin-left:24rem;margin-right:3rem}}@media screen and (min-width: 86em){.content{padding-top:9rem;margin-left:25rem;margin-right:4rem;max-width:54rem}}@media screen and (min-width: 1664px){.content{margin:auto}}.large-only{display:none}@media screen and (min-width: 1664px){.large-only{display:block}}.avatar{width:7rem;height:7rem;border-radius:100%;overflow:hidden;display:inline-block}.avatar img{width:100%}.content .avatar{float:right;box-sizing:content-box;border:1rem solid var(--body-bg);transition:border-color 1s ease;margin-top:-1.5rem;margin-right:-1rem}hr.dingbat{display:none}.center-image{margin:auto;display:block}.note:before{content:"Note"}.page>header>.note-sm:before,.page>header>.note:before,.page>header>#markdown-toc:before{content:"Description"}#markdown-toc:before{content:"Table of Contents"}.layout-resume .note-sm:before,.layout-resume .note:before,.layout-resume #markdown-toc:before{content:"Summary"} .clearfix,main:not(.layout-resume) .columns::after{content:"";display:table;clear:both}.color-transition,main:not(.layout-resume) .project-card{transition:none}main:not(.layout-resume) .columns{margin-left:-1rem;display:flex;flex-wrap:wrap;contain:content;padding-top:1rem;margin-top:1rem;padding-right:1rem;margin-right:-1rem}main:not(.layout-resume) .column{float:left;padding-left:1rem;margin-bottom:2rem;width:100%;display:flex}@media screen and (min-width: 42em){main:not(.layout-resume) .columns{margin-left:-2rem;margin-right:-2rem}main:not(.layout-resume) .column-1-2{width:50%}}@media screen and (min-width: 1664px){main:not(.layout-resume) .columns-break{width:calc(50vw + 25rem)}main:not(.layout-resume) .columns-break>.column-1-2,main:not(.layout-resume) .columns-break>.column-1{width:27.5rem}}@media print{main:not(.layout-resume) .columns{display:block}main:not(.layout-resume) .column{display:block;width:50%}}main:not(.layout-resume) .project-card{width:100%;color:var(--gray-text);background-color:var(--gray-bg);padding-bottom:1rem;position:relative;overflow:hidden;box-shadow:0.125rem 0.125rem 1rem rgba(0,0,0,0.2);contain:content;border-radius:.5rem;page-break-inside:avoid;transition:transform 500ms ease;will-change:transform}main:not(.layout-resume) .project-card:hover{transform:translateY(-0.25rem);transition:transform 250ms ease}main:not(.layout-resume) .project-card>a.flip-project{display:block}main:not(.layout-resume) .project-card>a.flip-project .project-card-img{margin-bottom:0}main:not(.layout-resume) .project-card>a.flip-project .project-card-img img{display:block;border-top-left-radius:.5rem;border-top-right-radius:.5rem}main:not(.layout-resume) .project-card a{position:relative;z-index:1}main:not(.layout-resume) .project-card a.fill-card{position:absolute;top:0;left:0;right:0;bottom:0;z-index:0}main:not(.layout-resume) .project-card>.project-card-title,main:not(.layout-resume) .project-card>.project-card-text{text-align:center;padding:0 1rem}main:not(.layout-resume) .project-card>.project-card-title{display:block;font-size:1.08rem;margin-top:.75rem;margin-bottom:.25rem;color:inherit}main:not(.layout-resume) .project-card>.project-card-text{margin:.25rem 0}main:not(.layout-resume) .column-1>.project-card>.project-card-title{font-size:1.2rem}main:not(.layout-resume) .column-1>.project-card>.project-card-text{font-size:1rem}</style><link rel="preload" as="style" href="/pages/colindembovsky/assets/css/hydejack-9.1.4.css" id="_stylePreload"><link rel="preload" as="style" href="/pages/colindembovsky/assets/icomoon/style.css" id="_iconsPreload"><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Roboto+Slab:700%7CNoto+Sans:400,400i,700,700i&display=swap" id="_fontsPreload"> <script> setRel('_stylePreload'); setRel('_iconsPreload'); /**/setRel('_fontsPreload');/**/ </script> <noscript><link rel="stylesheet" href="/pages/colindembovsky/assets/css/hydejack-9.1.4.css"><link rel="stylesheet" href="/pages/colindembovsky/assets/icomoon/style.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:700%7CNoto+Sans:400,400i,700,700i&display=swap"> </noscript><style id="_pageStyle"> html{--accent-color: rgb(79, 129, 220);--accent-color-faded: rgba(79,129,220,0.5);--accent-color-highlight: rgba(79,129,220,0.1);--accent-color-darkened: #2f6ad6;--theme-color: rgb(5,19,24);--dark-mode-body-bg: #292e30;--dark-mode-border-color: #353c3e}</style><!--<![endif]--> <script async src="https://www.googletagmanager.com/gtag/js?id=G-FD31RTDXK2"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-FD31RTDXK2'); </script><body class="no-break-layout"> <script> window._sunrise = 6; window._sunset = 18; !function(e,s){var d="light-mode",o="dark-mode",a=(new Date).getHours();"matchMedia"in e&&e.matchMedia("(prefers-color-scheme)")||(o=(e=a<=e._sunrise||a>=e._sunset?o:d)==o?d:o,s.body.classList.add(e),s.body.classList.remove(o))}(window,document); </script> <hy-push-state id="_pushState" replace-selector="#_main" link-selector="a[href]:not([href^='/pages/colindembovsky/assets/']):not(.external):not(.no-push-state)" script-selector="script" duration="500" hashchange ><div id="_navbar" class="navbar fixed-top"><div class="content"> <span class="sr-only">Jump to:</span><div class="nav-btn-bar"> <a id="_menu" class="nav-btn no-hover" href="#_drawer--opened"> <span class="sr-only">Navigation</span> <span class="icon-menu"></span> </a><div class="nav-span"></div></div></div></div><hr class="sr-only" hidden /><main id="_main" class="content layout-post" role="main" ><nav id="breadcrumbs" class="screen-only"><ul><li><a href="/pages/colindembovsky/">home</a><li> <span>/</span> <span>aurelia-azure-and-vsts</span></ul></nav><article id="post-aurelia-azure-and-vsts" class="page post mb6" role="article"><header><h1 class="post-title flip-project-title"> Aurelia, Azure and VSTS</h1><div class="post-date"> <span class="ellipsis mr1"> <time datetime="2017-06-10T00:05:22+00:00">10 Jun 2017</time> on <a href="/pages/colindembovsky/tag/development/" class="flip-title">development</a>, <a href="/pages/colindembovsky/tag/alm/" class="flip-title">alm</a> </span></div><div class="hr pb0"></div></header><p>I am a huge fan of <a href="http://aurelia.io/">Aurelia</a> – and that was even when I was working with it in the beta days. I recently had to do some development to display <a href="https://d3js.org/">d3</a> graphs, and needed a simple SPA app. Of course I decided to use Aurelia. During development, I was again blown away by how well thought out Aurelia is – and using some new (to me) tooling, the experience was super. In this post I’ll walk through the tools that I used as well as the build/release pipeline that I set up to host the site in Azure.<h2 id="tools">Tools</h2><p>Here are the tools that I used:<ol><li><a href="https://github.com/aurelia/cli">aurelia-cli</a> to create the project, scaffold and install components, build and run locally<li><a href="https://code.visualstudio.com/">VS Code</a> for frontend editing, with a great <a href="http://blog.aurelia.io/2016/10/11/introducing-the-aurelia-vs-code-plugin/">Aurelia extension</a><li><a href="https://www.visualstudio.com/downloads/">Visual Studio 2017</a> for coding/running the API<li><a href="https://www.typescriptlang.org/">TypeScript</a> for the Aurelia code<li><a href="https://karma-runner.github.io/1.0/index.html">Karma</a> (with <a href="http://phantomjs.org/">phantomJS</a>) and Istanbul for frontend testing and coverage<li>.<a href="https://www.microsoft.com/net/core#windowsvs2017">NET Core</a> for the Aurelia host as well as for an API<li><a href="https://azure.microsoft.com/en-us/services/app-service/">Azure App Services</a> to host the web app<li><a href="https://www.visualstudio.com/team-services/">VSTS</a> for Git source control, build and release</ol><h2 id="the-demo-app-and-the-challenges">The Demo App and the Challenges</h2><p>To walk through the development process, I’m going to create a stupid-simple app. This isn’t a coding walkthrough per se – I want to focus on how to use the tooling to support your development process. However, I’ll demonstrate the challenges as well as the solutions, hopefully showing you how quickly you can get going and do what you do best – code!<p>The demo app will be an Aurelia app with just a REST call to an API. While it is a simple app, I’ll walk through a number of important development concepts:<ol><li>Creating a new project<li>Configuring VS Code<li>Installing components<li>Building, bundling and running the app locally<li>Handling different configs for different environments<li>Automated build, test and deployment of the app</ol><h3 id="creating-the-dotnet-projects">Creating the DotNet Projects</h3><p>There are some prerequisites to getting started, so I installed all of these:<ul><li>nodejs<li>npm<li>dotnet core<li>aurelia-cli<li>VS Code<li>VS 2017</ul><p>Once I had the prereqs installed, I created a new empty folder (actually I cloned an empty Git repo – if you don’t clone a repo, remember to git init). Since I wanted to peg the dotnet version, I created a new file called global.json:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "sdk": {
+    "version": "1.0.4"
+  }
+}
+</code></pre></div></div><p>I also created a .gitignore (helpful tip: if you open the folder in Visual Studio and use Team Explorer-&gt;Settings-&gt;Repository Settings, you can create a default .gitignore and .gitattributes file).<p>Then I created a new dotnet webapi project to “host” the Aurelia app in a folder called frontend and another dotnet project to be the API in a folder called API: <!--kg-card-begin: html--><p><a href="/assets/images/files/61a4dc74-b9ef-466e-839c-e8bef965e68e.png"><img src="/assets/images/files/8ba06ff0-8452-4001-976f-c6de8fda1880.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>The commands are:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir frontend
+cd frontend
+dotnet new webapi
+cd ..
+mkdir API
+cd API
+dotnet new webapi
+</code></pre></div></div><p>I then opened the API project in Visual Studio. Pressing save prompted me to create a solution file, which I did in the API folder. I also created an empty readme.txt file in the wwwroot folder (I’ll explain why when we get to the build) and changed the Launch URL in the project properties to “api/values”: <!--kg-card-begin: html--><p><a href="/assets/images/files/1e7d032a-075e-4e00-a32d-7ee0b27dfcdc.png"><img src="/assets/images/files/a47cfea4-6910-4eed-9de0-2f1d957b7db0.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>When I press F5 to debug, I see this: <!--kg-card-begin: html--><p><a href="/assets/images/files/637a8409-48f7-484c-b183-aa6a0a39f59a.png"><img src="/assets/images/files/8714a2ae-aeeb-4750-a9cb-3569af41e412.png" alt="image" title="image" /></a><!--kg-card-end: html--><h3 id="creating-the-aurelia-project">Creating the Aurelia Project</h3><p>I was now ready to create the Aurelia skeleton. The last time I used Aurelia, there was no such thing as the <a href="https://github.com/aurelia/cli">aurelia-cli</a> – so it was a little bumpy getting started. I found using the cli and the project structure it creates for building/bundling made development smooth as butter. So I cd’d back to the frontend folder and ran the aurelia-cli command to create the Aurelia project: <!--kg-card-begin: html--> <font face="Courier New">au new --here</font> <!--kg-card-end: html--><p>. The “ <!--kg-card-begin: html--> <font face="Courier New">--here</font> <!--kg-card-end: html--><p>” is important because it tells the aurelia-cli to create the project in this directory without creating another subdirectory. A wizard then walked me through some choices: here are my responses:<ul><li>Target platform: .NET Core<li>Transpiler: TypeScript<li>Template: With minimum minification<li>CSS Processor: Less<li>Unit testing: Yes<li>Install dependencies: Yes</ul><p>That created the Aurelia project for me and installed all of the nodejs packages that Aurelia requires. Once the install completed, I was able to run by typing “au run”: <!--kg-card-begin: html--><p><a href="/assets/images/files/886c77ba-42fe-4bc1-b1e4-c2006b7ee226.png"><img src="/assets/images/files/143629bb-f9f7-4c0e-ba77-251c16e29728.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>Whoop! The skeleton is up, so it’s time to commit!<p>You can find the repo I used for this post <a href="https://github.com/colindembovsky/AzureAureliaDemo">here</a>. There are various branches – start is the the start of the project up until now – in other words, the absolute bare skeleton of the project.<h3 id="configuring-vs-code">Configuring VS Code</h3><p>Now that I have a project structure, I can start coding. I’ve already got Visual Studio for the API project, which I could use for the frontend editing, but I really like doing nodejs development in VS Code. So I open up the frontend folder in VS Code.<p>I’ve also installed some VS Code extensions:<ol><li><a href="https://marketplace.visualstudio.com/items?itemName=emmanuelbeziat.vscode-great-icons">VSCode Great Icons</a> – makes the icons in the file explorer purdy (don’t forget to configure your preferences after you install the extension!)<li><a href="https://marketplace.visualstudio.com/items?itemName=eg2.tslint">TSLint</a> – lints my TypeScript as I code<li><a href="https://marketplace.visualstudio.com/items?itemName=AureliaEffect.aurelia">aurelia</a> – palette commands and html intellisense</ol><h4 id="configuring-tslint">Configuring TSLint</h4><p>There is already an empty tslint.json file in the root of the frontend project. Once you’ve installed the VS Code TSLint extension, you’ll see lint warnings in the status bar: though you have to first configure which rules you want to run. I usually start by extending the tslint:latest rules. Edit the tslint.json file to look like this:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "extends": ["tslint:latest"],
+  "rules": {
+    
+  }
+}
+</code></pre></div></div><p>Now you’ll see some warnings and green squigglies in the code: <!--kg-card-begin: html--><p><a href="/assets/images/files/5e8d659a-4185-48d6-8b46-96fa9fdbc862.png"><img src="/assets/images/files/a91465e3-2b40-4ba1-97c6-6180273b61f4.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>I don’t care about the type of quotation marks (single or double) and I don’t care about alphabetically ordering my imports, so I override those rules:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "extends": ["tslint:latest"],
+  "rules": {
+    "ordered-imports": [
+      false
+    ],
+    "quotemark": [
+      false
+    ]
+  }
+}
+</code></pre></div></div><p>Of course you can put whatever ruleset you want into this file – but making a coding standard for your team that’s enforced by a tool rather than in a wiki or word doc is a great practice! A helpful tip is that if you edit the json file in VS Code you get intellisense for the rules – and you can see the name of the rule in the warnings window.<h3 id="installing-components">Installing Components</h3><p>Now we can use the aurelia cli (au) to install components. For example, I want to do some REST calls, so I want to install the fetch-client: <!--kg-card-begin: html--> <font face="Courier New">au install aurelia-fetch-client whatwg-fetch</font> <!--kg-card-end: html--><p>This not only adds the package, but amends the aurelia.json manifest file (in the aurelia_project folder) so that the aurelia-fetch-client is bundled when the app is “compiled”. I also recommend installing whatwg-fetch which is a fetch polyfill. Let’s create a new class which is a wrapper for the fetch client:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { autoinject } from 'aurelia-framework';
+import { HttpClient } from 'aurelia-fetch-client';
+
+const baseUrl = "http://localhost:1360/api";
+
+@autoinject
+export class ApiWrapper {
+    public message = 'Hello World!';
+    public values: string[];
+
+    constructor(public client: HttpClient) {
+		client.configure(config =&amp;gt; {
+			config
+				.withBaseUrl(baseUrl)
+				.withDefaults({
+					headers: {
+						Accept: 'application/json',
+					},
+				});
+		});
+	}
+}
+</code></pre></div></div><p>Note that (for now) we’re hard-coding the baseUrl. We’ll address config shortly.<p>We can now import in the ApiWrapper (via injection) and call the values method:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { autoinject } from 'aurelia-framework';
+import { ApiWrapper } from './api';
+
+@autoinject
+export class App {
+  public message = 'Hello World!';
+  public values: string[];
+
+  constructor(public api: ApiWrapper) {
+    this.initValues();
+  }
+
+  private async initValues() {
+    try {
+      this.values = await this.api.client.fetch("/values")
+        .then((res) =&amp;gt; res.json());
+    } catch (ex) {
+      console.error(ex);
+    }
+  }
+}
+</code></pre></div></div><p>Here’s the updated html for the app.html page:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;template&gt;
+  &lt;h1&gt;${message}&lt;/h1&gt;
+  &lt;h3&gt;Values&lt;/h3&gt;
+  &lt;ul&gt;
+    &lt;li repeat.for="val of values"&gt;${val}&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/template&gt;
+</code></pre></div></div><p>Nothing too fancy – but shown here to be complete. I’m not going to make a full app here, since that’s not the goal of this post.<p>Finally, we need to enable CORS on the Web API (since it does not allow CORS by default). Add the Microsoft.AspNet.Cors package to the API project and then add the services.AddCors() and app.UseCors() lines (see this snippet):<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public void ConfigureServices(IServiceCollection services)
+{
+  // Add framework services.
+  services.AddMvc();
+	services.AddCors();
+}
+
+// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+{
+  loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+  loggerFactory.AddDebug();
+
+  app.UseCors(p =&amp;gt; p.AllowAnyOrigin().AllowAnyMethod());
+  app.UseMvc();
+}
+</code></pre></div></div><p>Now we can get this when we run the project (using “au run”): <!--kg-card-begin: html--><p><a href="/assets/images/files/2d4e4be1-dd11-422d-990c-b33fe7969174.png"><img src="/assets/images/files/5e26fa9e-fbff-4216-9280-37081283ae84.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>If you’re following along in the <a href="https://github.com/colindembovsky/AzureAureliaDemo">repo</a> code, the changes are on the “Step1-AddFetch” branch.<h3 id="running-locally">Running Locally</h3><p>Running locally is trivial. I end up with Visual Studio open and pressing F5 to run the backend API project – the frontend project is just as trivial. In VSCode, with the frontend folder open, just hit ctrl-shift-p to bring up the command palette and then type/select “au run –watch” to launch the frontend “build”. This transpiles the TypeScript to JavaScript, compiles Less (or SASS) to css, bundles and minifies all your html, compiled css and JavaScript into a single app-bundle.js in wwwroot\scripts. It also minifies and bundles Aurelia and its dependencies into vendor-bundle.js, using the settings from the aurelia.json file. It’s a lot of work, but Aurelia takes care of it all for you – just run “au run” to do all that stuff and launch a server. If you add the –watch parameter, the process watches your source files (html, Less, TypeScript) and automatically recompiles everything and refreshes the browser automagically using browsersync. It’s as smooth as butter!<h2 id="config-management">Config Management</h2><h3 id="attempt-1--using-environmentts">Attempt 1 – Using environment.ts</h3><p>Let’s fix up the hard-coded base URL for the api class. Aurelia does have the concept of “environments” – you can see that by looking in the src\environment.ts file. You would be tempted to change the values of that file, but you’ll see that if you do, the contents get overwritten each time Aurelia compiles. Instead, open up the aurelia-project\environments folder, where you’ll see three environment files – dev, stage and prod.ts. To change environment, just enter “au run –env dev” to get the dev environment or “au run –env prod” to get the prod environment. (Unfortunately you can’t change the environment using VSCode command palette, so you have to run the run command from a console or from the VSCode terminal).<p>Let’s edit the environments to put the api base URL there instead of hard-coding it:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export default {
+  apiBaseUrl: "http://localhost:64705/api",
+  debug: true,
+  testing: true,
+};
+</code></pre></div></div><p>Of course we add the apiBaseUrl property to the stage and prod files too!<p>With that change, we can simply import the environment and use the value of the property in the api.ts file:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { autoinject } from 'aurelia-framework';
+import { HttpClient } from 'aurelia-fetch-client';
+import environment from './environment';
+
+@autoinject
+export class ApiWrapper {
+    public message = 'Hello World!';
+    public values: string[];
+
+    constructor(public client: HttpClient) {
+        client.configure(config =&amp;gt; {
+            config
+                .withBaseUrl(environment.apiBaseUrl)
+                .withDefaults({
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+        });
+    }
+}
+</code></pre></div></div><p>The important changes are on line 2 (reading in the environment settings) and line 13 (using the value). Now we can run for different environments. If you’re following along in the <a href="https://github.com/colindembovsky/AzureAureliaDemo">repo</a> code, the changes are on the “Step2-EnvTsConfig” branch.<h3 id="attempt-2--using-a-json-file">Attempt 2 – Using a Json File</h3><p>There’s a problem with the above approach though – if we have secrets (like access tokens or keys) then we don’t want them checked into source control. Also, when we get to build/release, we want the same build to go to multiple environments – using environment.ts means we have to build once for each environment and then select the correct package for the corresponding environment – it’s nasty. Rather, we want to be able to configure the environment settings during a release. This puts secret information in the release tool instead of source control, which is much better, and allows a single build to be deployed to any number of environments.<p>Unfortunately, it’s not quite so simple (at first glance). The environment.ts file is bundled into app-bundle.js, so there’s no way to inject values at deploy time, unless you want to monkey with the bundle itself. It would be much better to take a leaf out of the .NET CORE playbook and set up a Json config file. Fortunately, there’s an Aurelia plugin that allows you to do just that! Conveniently, it’s called aurelia-configuration.<p>Run “au install aurelia-configuration” to install the module.<p>Now (by convention) the config module looks for a file called “config\config.json”. So in the src folder, add a new folder called config and add a new file into the config folder called config.json:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+      "api": {
+            "baseUri": "http://localhost:12487/api"
+      }
+}
+</code></pre></div></div><p>We can then inject the AureliaConfiguration class into our classes and call the get() method to retrieve a variable value. Let’s change the api.ts file again:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { autoinject } from 'aurelia-framework';
+import { HttpClient } from 'aurelia-fetch-client';
+import { AureliaConfiguration } from 'aurelia-configuration';
+
+@autoinject
+export class ApiWrapper {
+    public message = 'Hello World!';
+    public values: string[];
+
+    constructor(public client: HttpClient, private aureliaConfig: AureliaConfiguration) {
+        client.configure(config =&amp;gt; {
+            config
+                .withBaseUrl(aureliaConfig.get("api.baseUri"))
+                .withDefaults({
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                });
+        });
+    }
+}
+</code></pre></div></div><p>Line 3 has us importing the type, line 10 has the constructor arg for the autoinjection and we get the value on line 13.<p>We also have to tell Aurelia to use the config plugin. Open main.ts and add the plugin code (line 8 below):<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import {Aurelia} from 'aurelia-framework';
+import environment from './environment';
+
+export function configure(aurelia: Aurelia) {
+  aurelia.use
+    .standardConfiguration()
+    .feature('resources')
+    .plugin('aurelia-configuration');
+  ...
+</code></pre></div></div><p>There’s one more piece to this puzzle: the config.json file doesn’t get handled anywhere, so running the program won’t work. We need to tell the Aurelia bundler that it needs to add in the config.json file and publish it to the wwwroot folder. To do that, we can add in a copyFiles target onto the aurelia.json settings file:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "name": "frontend",
+  "type": "project:application",
+  "platform": {
+    ...
+  },
+  ...
+  "build": {
+    "targets": [
+     ...
+    ],
+    "loader": {
+      ...
+    },
+    "options": {
+      ...
+    },
+    "bundles": [
+      ...
+    ],
+    "copyFiles": {
+      "src/config/*.json": "wwwroot/config"
+    }
+  }
+}
+</code></pre></div></div><p>At the bottom of the file, just after the build.bundles settings, we add the copyFiles target. The config.json file is now copied to the wwwroot/config folder when we build, ready to be read at run time! If you’re following along in the <a href="https://github.com/colindembovsky/AzureAureliaDemo">repo</a> code, the changes are on the “Step3-JsonConfig” branch.<h2 id="testing">Testing</h2><h3 id="authoring-the-tests">Authoring the Tests</h3><p>Of course the API project would require tests – but doing .NET testing is fairly simple and there’s a ton of guidance on how to do that. I was more interested in testing the frontend (Aurelia) code with coverage results.<p>When I created the frontend project, Aurelia created a test stub project. If you open the test folder, there’s a simple test spec in unit\app.spec.ts:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import {App} from '../../src/app';
+
+describe('the app', () =&amp;gt; {
+  it('says hello', () =&amp;gt; {
+    expect(new App().message).toBe('Hello World!');
+  });
+});
+</code></pre></div></div><p>We’ve changed the App class, so this code won’t compile correctly. Now we need to pass an ApiWrapper to the App constructor. And if we want to construct an ApiWrapper, we need an AureliaConfiguration instance as well as an HttpClient instance. We’re going to want to mock the API calls that the frontend makes, so let’s stub out a mock implementation of HttpClient. I add a new class in src\test\unit\utils\mock-fetch.ts:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { HttpClient } from 'aurelia-fetch-client';
+
+export class HttpClientMock extends HttpClient {
+}
+</code></pre></div></div><p>We’ll flesh this class out shortly. For now, it’s enough to get an instance of HttpClient for the ApiWrapper constructor. What about the AureliaConfiguration instance? Fortunately, we can create (and even configure) one really easily:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let aureliaConfig = new AureliaConfiguration();
+aureliaConfig.set("api.baseUri", "http://test");
+</code></pre></div></div><p>We add the “api.BaseUri” key since that’s the value that the ApiWrapper reads from the configuration object. We can now flesh out the remainder of our test:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import {App} from '../../src/app';
+import {ApiWrapper} from '../../src/api';
+import {HttpClientMock} from './utils/mock-fetch';
+import {AureliaConfiguration} from 'aurelia-configuration';
+
+describe('the app', () =&amp;gt; {
+  it('says hello', async done =&amp;gt; {
+    // arrange
+    let aureliaConfig = new AureliaConfiguration();
+    aureliaConfig.set("api.baseUri", "http://test");
+
+    const client = new HttpClientMock();
+    client.setup({
+      data: ["testValue1", "testValue2", "testValue3"],
+      headers: {
+        'Content-Type': "application/json",
+      },
+      url: "/values",
+    });
+    const api = new ApiWrapper(client, aureliaConfig);
+
+    // act
+    let sut: App;
+    try {
+      sut = new App(api);
+    } catch (e) {
+      console.error(e);
+    }
+
+    // assert
+    setTimeout(() =&amp;gt; {
+      expect(sut.message).toBe('Hello World!');
+      expect(sut.values.length).toBe(3);
+      expect(sut.values).toContain("testValue1");
+      expect(sut.values).toContain("testValue2");
+      expect(sut.values).toContain("testValue3");
+      done();
+    }, 10);
+  });
+});
+</code></pre></div></div><p>Notes:<ul><li>Lines 13-19: configure the mock fetch response (we’ll see the rest of the mock HttpClient class shortly)<li>Line 20: instantiate a new ApiWrapper<li>Lines 23-28: call the App constructor<li>Lines 31-38: we wrap the asserts in a timeout since the App constructor calls an async method (perhaps there’s a better way to do this?)</ul><p>Let’s finish off the test code by looking at the mock-fetch class:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import { HttpClient } from 'aurelia-fetch-client';
+export class HttpClientMock extends HttpClient {
+}
+
+export interface IMethodConfig {
+    url: string;
+    method?: string;
+    status?: number;
+    statusText?: string;
+    headers?: {};
+    data?: {};
+};
+
+export class HttpClientMock extends HttpClient {
+    private config: IMethodConfig[] = [];
+
+    public setup(config: IMethodConfig) {
+        this.config.push(config);
+    }
+
+    public async fetch(input: Request | string, init?: RequestInit) {
+        let url: string;
+        if (typeof input === "string") {
+            url = input;
+        } else {
+            url = input.url;
+        }
+
+        // find the matching setup method
+        let methodConfig: IMethodConfig;
+        methodConfig = this.config.find(c =&amp;gt; c.url === url);
+        if (!methodConfig) {
+            console.error(`---MockFetch: No such method setup: ${url}`);
+            return Promise.reject(new Response(null,
+                {
+                    status: 404,
+                    statusText: `---MockFetch: No such method setup: ${url}`,
+                }));
+        }
+
+        // set up headers
+        let responseInit: ResponseInit = {
+            headers: methodConfig.headers || {},
+            status: methodConfig.status || 200,
+            statusText: methodConfig.statusText || "",
+        };
+
+        // get a unified request object
+        let request: Request;
+        if (Request.prototype.isPrototypeOf(input)) {
+            request = (&lt;request&gt; input);
+        } else {
+            request = new Request(input, responseInit || {});
+        }
+
+        // create a response object
+        let response: Response;
+        const data = JSON.stringify(methodConfig.data);
+        response = new Response(data, responseInit);
+
+        // resolve or reject accordingly
+        return response.status &amp;gt;= 200 &amp;amp;&amp;amp; response.status &amp;lt; 300 ?
+            Promise.resolve(response) : Promise.reject(response);
+    }
+}
+&lt;/request&gt;
+</code></pre></div></div><p>I won’t go through the whole class, but essentially you configure a mapping of routes to responses so that when the mock object is called it can return predictable data.<p>With those changes in place, we can run the tests using “au test”. This launches Chrome and runs the test. The Aurelia project did the heavy lifting to configure paths for the test runner (Karma) so that the tests “just work”.<h3 id="going-headless-and-adding-reports-and-coverage">Going Headless and Adding Reports and Coverage</h3><p>Now that we can run the tests in Chrome with results splashed to the console, we should consider how these tests would run in a build. Firstly, we want to produce a report file of some sort so that the build can save the results. We also want to add coverage. Finally, we want to run headless so that we can run this on an agent that doesn’t need access to a desktop to launch a browser!<p>We’ll need to add some development-time node packages to accomplish these changes:<p>yarn add karma-phantomjs-launcher karma-coverage karma-tfs gulp-replace –dev<p>With those package in place, we can change the karma.conf.js file to use phantomjs (a headless browser) instead of Chrome. We’re also going to add in the test result reporter, coverage reporter and a coverage remapper. The coverage will report coverage on the JavaScript files, but we would ideally want coverage on the TypeScript files – that’s what the coverage remapper will do for us.<p>Here’s the new karma.conf.js:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'use strict';
+const path = require('path');
+const project = require('./aurelia_project/aurelia.json');
+const tsconfig = require('./tsconfig.json');
+
+let testSrc = [
+  { pattern: project.unitTestRunner.source, included: false },
+  'test/aurelia-karma.js'
+];
+
+let output = project.platform.output;
+let appSrc = project.build.bundles.map(x =&amp;gt; path.join(output, x.name));
+let entryIndex = appSrc.indexOf(path.join(output, project.build.loader.configTarget));
+let entryBundle = appSrc.splice(entryIndex, 1)[0];
+let files = [entryBundle].concat(testSrc).concat(appSrc);
+
+module.exports = function(config) {
+  config.set({
+    basePath: '',
+    frameworks: [project.testFramework.id],
+    files: files,
+    exclude: [],
+    preprocessors: {
+      [project.unitTestRunner.source]: [project.transpiler.id],
+      'wwwroot/scripts/app-bundle.js': ['coverage']
+    },
+    typescriptPreprocessor: {
+      typescript: require('typescript'),
+      options: tsconfig.compilerOptions
+    },
+    reporters: ['progress', 'tfs', 'coverage', 'karma-remap-istanbul'],
+    port: 9876,
+    colors: true,
+    logLevel: config.LOG_INFO,
+    autoWatch: true,
+    browsers: ['PhantomJS'],
+    singleRun: false,
+    // client.args must be a array of string.
+    // Leave 'aurelia-root', project.paths.root in this order so we can find
+    // the root of the aurelia project.
+    client: {
+      args: ['aurelia-root', project.paths.root]
+    },
+
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
+    },
+
+    coverageReporter: {
+      dir: 'reports',
+      reporters: [
+        { type: 'json', subdir: 'coverage', file: 'coverage-final.json' },
+      ]
+    },
+
+    remapIstanbulReporter: {
+      src: 'reports/coverage/coverage-final.json',
+      reports: {
+        cobertura: 'reports/coverage/cobertura.xml',
+        html: 'reports/coverage/html'
+      }
+    }
+  });
+};
+</code></pre></div></div><p>Notes:<ul><li>Line 25: add a preprocessor to instrument the code that we’re going to execute<li>Line 31: we add reporters to produce results files (tfs), coverage and remapping<li>Lines 45-48: we configure a catch-all to close phantomjs if something fails<li>Lines 50-55: we configure the coverage to output a Json coverage file<li>Lines 57-63: we configure the remapper so that we get TypeScript coverage results</ul><p>One gotcha I had that I couldn’t find a work-around for: the html files that are generated showing which lines of code were hit is generated with incorrect relative paths and the src folder (with detailed coverage) generated outside the html report folder. Eventually, I decided that a simple replace and file move was all I needed, so I modified the test.ts task in the aurelia-project\tasks folder:<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// hack to fix the relative paths in the generated mapped html report
+let fixPaths = done =&amp;gt; {
+  let repRoot = path.join(__dirname, '../../reports/');
+  let repPaths = [
+    path.join(repRoot, 'src/**/*.html'),
+    path.join(repRoot, 'src/*.html'),
+  ];
+  return gulp.src(repPaths, { base: repRoot })
+        .pipe(replace(/(..\/..\/..\/)(\w)/gi, '../coverage/html/$2'))
+        .pipe(gulp.dest(path.join(repRoot)));
+};
+
+let unit;
+
+if (CLIOptions.hasFlag('watch')) {
+  unit = gulp.series(
+    build,
+    gulp.parallel(
+      watch(build, onChange),
+      karma,
+      fixPaths
+    )
+  );
+} else {
+  unit = gulp.series(
+    build,
+    karma,
+    fixPaths
+  );
+}
+</code></pre></div></div><p>I add new tasks called “updateIndex” and “copySrc” that fix up the paths for me. Perhaps there’s a config setting for the remapper that will render this obsolete, but this was the best I could come up with.<p>Now when you run “au test” you get a result file and coverage results for the TypeScript code all in the html folder with the correct paths. If you’re following along in the <a href="https://github.com/colindembovsky/AzureAureliaDemo">repo</a> code, these changes are on the master branch (this is the final state of the demo code).<h2 id="automated-build-and-test">Automated Build and Test</h2><p>We now have all the pieces in place to do a build. The build is fairly straightforward once you work out how to invoke the Arelia cli. Starting with a .NET Core Web App template, here is the definition I ended up with: <!--kg-card-begin: html--><p><a href="/assets/images/files/72b236bf-fd45-45b3-9070-3287303247e6.png"><img src="/assets/images/files/0573ca73-9e3b-4e2e-98f0-448f5d9c50ae.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>Here are the task settings:<ol><li>.NET Core Restore – use defaults<li>.NET Core Build<li>Change “Arguments” to –configuration $(BuildConfiguration) –version-suffix $(Build.BuildNumber)<li>The extra bit added is the version-suffix arg which produces binaries with the same version as the build number<li>npm install<li>Change “working folder” to frontend (this is the directory of the Aurelia project).\node_modules\aurelia-cli\bin\aurelia-cli.js test<li>Run command<li>Set “Tool” to node<li>Set “Arguments” to .\node_modules\aurelia-cli\bin\aurelia-cli.js test<li>Expand “Advanced” and set “Working folder” to frontend<li>This runs the tests and produces the test results and coverage results files<li>Run command<li>Set “Tool” to node<li>Set “Arguments” to .\node_modules\aurelia-cli\bin\aurelia-cli.js build –env prod<li>Expand “Advanced” and set “Working folder” to frontend<li>This does transpilation, minification and bundling so that we’re ready to deploy<li>Publish Test Results<li>Set “Test Result Format” to VSTest<li>Set “Test results files” to frontend/testresults/TEST*.xml<li>Set “Test run title” to Aurelia<li>Publish code coverage Results<li>Set “Code Coverage Tool” to Cobertura<li>Set “Summary File” to $(Build.SourcesDirectory)/frontend/reports/coverage/cobertura.xml<li>Set “Report Directory” to $(System.DefaultWorkingDirectory)/frontend/reports/coverage/html<li>.NET Core Publish<li>Make sure “Publish Web Projects” is checked – this is why I added a dummy readme file into the wwwroot folder of the API app, otherwise it’s not published as a web project<li>Set “Arguments” to –configuration $(BuildConfiguration) –output $(build.artifactstagingdirectory) –version-suffix $(Build.BuildNumber)<li>Make sure “Zip Published Projects” is checked<li>On the Options Tab<li>Set the build number format to 1.0.0$(rev:.r) to give the build number a 1.0.0.x format<li>Set the default agent queue to Hosted VS2017 (or you can select a private build agent with VS 2017 installed)</ol><p>Now when I run the build, I get test and coverage results in the summary: <!--kg-card-begin: html--><p><a href="/assets/images/files/9b01b4c6-bca4-4f1e-8fb9-2d4498b76231.png"><img src="/assets/images/files/ac8a03f6-4c0b-489f-a757-e7fa56b35e3c.png" alt="SNAGHTML323918f" title="SNAGHTML323918f" /></a><!--kg-card-end: html--><p>The coverage files are there if you click the Code Coverage results tab, but there’s a problem with the css. <!--kg-card-begin: html--><p><a href="/assets/images/files/54921ef4-6167-46e1-9de3-4277bda6fa3e.png"><img src="/assets/images/files/ae799414-0963-480f-9fbb-5e64273d45d4.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>The &lt;link&gt; elements are stripped out of the html pages when the iFrame for the coverage results shows – I’m working with the product team to find a workaround for this. If you download the results from the Summary page and unzip them, you get the correct rendering.<p>I can also see both web projects ready for deployment in the Artifacts tab: <!--kg-card-begin: html--><p><a href="/assets/images/files/1fe95c7d-f588-4063-abda-479c87794755.png"><img src="/assets/images/files/e91eff17-6284-4452-b096-c421006379b4.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>We’re ready for a release!<h2 id="the-release-definition">The Release Definition</h2><p>I won’t put the whole release to Azure here – the key point to remember is the configuration. We’ve done the work to move the configuration into the config.json file for this very reason.<p>Once you’ve set up an Azure endpoint, you can add in an “Azure App Services Deploy” task. Select the subscription and app service and then change the “Package or folder” from “$(System.DefaultWorkingDirectory)/**/*.zip” to “$(System.DefaultWorkingDirectory)/drop/frontend.zip” (or API.zip) to deploy the corresponding site. To handle the configuration, you simply add “wwwroot/config/config.json” to the “JSON variable substitution”. <!--kg-card-begin: html--><p><a href="/assets/images/files/e1ee97d8-a7a6-4ecc-bb7c-4a16cf65dc6e.png"><img src="/assets/images/files/0e80ad3c-4056-4ed3-87f7-ec8247095fa8.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>Now we can define an environment variable for the substitution. Just add one with the full “JSON path” for the variable. In our case, we want “api.baseUri” to be the name and then put in whatever the corresponding environment value is: <!--kg-card-begin: html--><p><a href="/assets/images/files/09a2c2e9-0ad1-459a-8832-963872835b86.png"><img src="/assets/images/files/17a16497-36e7-4011-86d1-f1ea5718de6d.png" alt="image" title="image" /></a><!--kg-card-end: html--><p>We can repeat this for other variables if we need more.<h2 id="conclusion">Conclusion</h2><p>I really love the Aurelia framework – and with the solid Aurelia cli, development is a really good experience. Add to that simple build and release management to Azure using VSTS, and you can get a complete site skeleton with full CI/CD in half a day. And that means you’re delivering better software, faster – always a good thing!<p>Happy Aurelia-ing!</article><hr class="dingbat related mb6" /><aside class="comments related" role="complementary"><h2 class="hr-bottom">Comments</h2><div id="giscus"><div></div></div><script> function toggle_giscus() { const c = document.body.classList; const dark = c.contains("dark-mode") || "_sunset" in window && !c.contains("light-mode") && matchMedia("(prefers-color-scheme: dark)").matches; const theme = dark ? "dark" : "light"; const scriptEl = document.createElement("script"); scriptEl.src = "https://giscus.app/client.js"; scriptEl.setAttribute("data-repo", "colindembovsky/colindembovsky.github.io"); scriptEl.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnk0MDczMjI3MjU="); scriptEl.setAttribute("data-category", "Giscussions"); scriptEl.setAttribute("data-category-id", "DIC_kwDOGEdAZc4B_F18"); scriptEl.setAttribute("data-mapping", "pathname"); scriptEl.setAttribute("data-reactions-enabled", "1"); scriptEl.setAttribute("data-emit-metadata", "colindembovsky/colindembovsky.github.io"); scriptEl.setAttribute("data-theme", theme); scriptEl.setAttribute("crossorigin", "anonymous"); const container = document.getElementById("giscus"); const old = container.firstElementChild; container.removeChild(old); container.appendChild(scriptEl); } document.addEventListener("hydejack-dark-mode-toggle", function() { toggle_giscus(); }); toggle_giscus(); </script></aside><aside class="other-projects related mb0" role="complementary"><h2>Related Posts</h2><div class="columns"><div class="column column-1-2"><article class="project-card"> <a href="/pages/colindembovsky/pimp-your-consoles-on-windows/" class="no-hover no-print-link flip-project" tabindex="-1"><div class="project-card-img aspect-ratio sixteen-nine flip-project-img"> <img src="/pages/colindembovsky/assets/images/default.jpeg" alt="Pimp Your Consoles on Windows" width="864" height="486" loading="lazy"/></div></a><h3 class="project-card-title flip-project-title"> <a href="/pages/colindembovsky/pimp-your-consoles-on-windows/" class="flip-title">Pimp Your Consoles on Windows</a></h3><a class="fill-card no-hover" href="/pages/colindembovsky/pimp-your-consoles-on-windows/" tabindex="-1"><span class="sr-only">Continue reading Pimp Your Consoles on Windows</span></a></article></div><div class="column column-1-2"><article class="project-card"> <a href="/pages/colindembovsky/using-chrome-to-solve-identity-hell/" class="no-hover no-print-link flip-project" tabindex="-1"><div class="project-card-img aspect-ratio sixteen-nine flip-project-img"> <img src="/pages/colindembovsky/assets/images/default.jpeg" alt="Using Chrome to Solve Identity Hell" width="864" height="486" loading="lazy"/></div></a><h3 class="project-card-title flip-project-title"> <a href="/pages/colindembovsky/using-chrome-to-solve-identity-hell/" class="flip-title">Using Chrome to Solve Identity Hell</a></h3><a class="fill-card no-hover" href="/pages/colindembovsky/using-chrome-to-solve-identity-hell/" tabindex="-1"><span class="sr-only">Continue reading Using Chrome to Solve Identity Hell</span></a></article></div></div></aside><aside class="related mb4" role="complementary"><h2 class="hr-bottom">Random Posts</h2><ul class="related-posts"><li class="h4"> <a href="/pages/colindembovsky/using-chrome-to-solve-identity-hell/" class="flip-title"><span>Using Chrome to Solve Identity Hell</span></a> <time class="faded fine" datetime="2018-03-08T01:33:59+00:00">08 Mar 2018</time><li class="h4"> <a href="/pages/colindembovsky/frequent-status-updateswhat-they-really-mean/" class="flip-title"><span>Frequent Status Updates–What They Really Mean</span></a> <time class="faded fine" datetime="2013-08-20T21:39:00+00:00">20 Aug 2013</time><li class="h4"> <a href="/pages/colindembovsky/using-powershell-to-replace-config-settings-in-lab-management/" class="flip-title"><span>Using Powershell to Replace Config Settings in Lab Management</span></a> <time class="faded fine" datetime="2011-06-16T20:49:00+00:00">16 Jun 2011</time></ul></aside><footer class="content" role="contentinfo"><hr/><p><small class="copyright">© 2021. All rights reserved. </small><hr class="sr-only"/></footer></main><hy-drawer id="_drawer" class="" side="left" threshold="10" noscroll ><header id="_sidebar" class="sidebar" role="banner"><div class="sidebar-bg sidebar-overlay" style="background-color:rgb(5,19,24);background-image:url(/pages/colindembovsky/assets/img/sidebar-bg.jpg)"></div><div class="sidebar-sticky"><div class="sidebar-about"> <a class="no-hover" href="/pages/colindembovsky/" tabindex="-1"> <img src="/pages/colindembovsky/assets/img/logo.png" class="avatar" alt="Colin's ALM Corner" width="120" height="120" loading="lazy" /> </a> <a class="sidebar-title" href="/pages/colindembovsky/"><h2 class="h1">Colin's ALM Corner</h2></a><p class=""> DevOpsology &amp; GitHub. <br /> <em>Opinions my own</em>.</div><nav class="sidebar-nav heading" role="navigation"> <span class="sr-only">Navigation:</span><ul><li> <a id="_drawer--opened" href="/pages/colindembovsky/tags/" class="sidebar-nav-item " > Tags </a><li> <a href="/pages/colindembovsky/about/" class="sidebar-nav-item " > About </a></ul></nav><div class="sidebar-social"> <span class="sr-only">Social:</span><ul><li> <a href="https://twitter.com/colindembovsky" title="Twitter" class="no-mark-external"> <span class="icon-twitter"></span> <span class="sr-only">Twitter</span> </a><li> <a href="https://github.com/colindembovsky" title="GitHub" class="no-mark-external"> <span class="icon-github"></span> <span class="sr-only">GitHub</span> </a><li> <a href="https://colinsalmcorner.com/feed.xml" title="RSS" class="no-mark-external"> <span class="icon-rss2"></span> <span class="sr-only">RSS</span> </a></ul></div></div></header></hy-drawer><hr class="sr-only" hidden /> </hy-push-state> <!--[if gt IE 10]><!----> <script nomodule>!function(){var t,n=document.createElement("script");!("noModule"in n)&&"onbeforeload"in n&&(t=!1,document.addEventListener("beforeload",function(e){if(e.target===n)t=!0;else if(!e.target.hasAttribute("nomodule")||!t)return;e.preventDefault()},!0),n.type="module",n.src=".",document.head.appendChild(n),n.remove())}(); </script> <script src="/pages/colindembovsky/assets/js/hydejack-9.1.4.js" type="module"></script> <script src="/pages/colindembovsky/assets/js/LEGACY-hydejack-9.1.4.js" nomodule defer></script> <script type="module"> if ('serviceWorker' in navigator) { /**/ navigator.serviceWorker.getRegistration() .then(r => r.unregister()) .catch(() => {}); /**/ } </script> <!--<![endif]--><div hidden><h2 class="sr-only">Templates (for web app):</h2><clap-config> <clap-text at="1">Keep going!</clap-text> <clap-text at="2">Keep going ×2!</clap-text> <clap-text at="3">Give me more!</clap-text> <clap-text at="5">Thank you, thank you</clap-text> <clap-text at="7">Far too kind!</clap-text> <clap-text at="10">Never gonna give me up?</clap-text> <clap-text at="14">Never gonna let me down?</clap-text> <clap-text at="20">Turn around and desert me!</clap-text> <clap-text at="30">You're an addict!</clap-text> <clap-text at="40">Son of a clapper!</clap-text> <clap-text at="50">No way</clap-text> <clap-text at="60">Go back to work!</clap-text> <clap-text at="70">This is getting out of <em>hand</em></clap-text> <clap-text at="80">Unbelievable</clap-text> <clap-text at="90">PREPOSTEROUS</clap-text> <clap-text at="100">I N S A N I T Y</clap-text> <clap-text at="185"><span style="font-family:monospace">FEED ME A STRAY CAT</span></clap-text> </clap-config> <template id="_animation-template"><div class="animation-main fixed-top"><nav id="breadcrumbs" class="screen-only"><ul></ul></nav><div class="content"><div class="page"></div></div></div></template> <template id="_loading-template"><div class="loading nav-btn fr"> <span class="sr-only">Loading…</span> <span class="icon-cog"></span></div></template> <template id="_error-template"><div class="page"><h1 class="page-title">Error</h1><p class="lead"> Sorry, an error occurred while loading <a class="this-link" href=""></a>.</div></template> <template id="_permalink-template"> <a href="#" class="permalink"> <span class="sr-only">Permalink</span> <span class="content-hash"></span> </a> </template> <template id="_cookies-banner-template"><div id="_cookies-banner" class="navbar fixed-bottom CookiesOK"><div class="content"><div class="nav-btn-bar"> <small class="faded"> <span>This site uses cookies. <a href="/cookies-policy/">Cookies Policy</a>. </span> <button id="_cookies-ok" class="btn btn-primary btn-sm">Okay</button> </small></div></div></div></template> <template id="_dark-mode-template"> <button id="_dark-mode" class="nav-btn no-hover" > <span class="sr-only">Dark Mode</span> <span class="icon-brightness-contrast"></span> </button> </template> <template id="_search-template"> <button id="_search" class="nav-btn no-hover"> <label class="sr-only" for="_search-input">Search</label> <span class="icon-search"></span> </button><div id="_search-box"><div class="nav-btn"> <span class="icon-search"></span></div><input id="_search-input" type="search" class="form-control form-control-lg nav-btn" placeholder="Type something…" /> <button type="reset" class="nav-btn no-hover"> <span class="sr-only">Close</span> <span class="icon-cross"></span> </button></div><div id="_hits"></div></template></div></html>
